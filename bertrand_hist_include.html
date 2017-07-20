@@ -1,0 +1,304 @@
+<!DOCTYPE HTML>
+<html style="height: 100%">
+
+<head>
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <title>Tree Viewer - sap.ui</title>
+      <style>
+            .my_canvas {
+                  height: 90vh;
+            }
+      </style>
+      <script src="https://bellenot.web.cern.ch/bellenot/public/test/shared-config.js"></script>
+      <script id="sap-ui-bootstrap" src="https://openui5.hana.ondemand.com/resources/sap-ui-core.js" data-sap-ui-trace="true" data-sap-ui-libs="sap.m,sap.ui.table,sap.ui.commons,sap.tnt"
+            data-sap-ui-areas="uiArea1" data-sap-ui-evt-oninit="createControls()">
+
+            </script>
+      <script type="text/javascript" src="jsrootsys/scripts/JSRootCore.js"></script>
+      <script>
+            var oPainter = null;
+            var _checkedNodes = [];
+
+            sendProcessLine = function (command) {
+                  console.log("AMT send process line ", sendProcessLine);
+                  if (command.length == 0) return false;
+                  command = command.replace(/=/g, "%3D");
+                  var url = '/ProcessLine/cmd.json?arg1="' + command + '"';
+                  JSROOT.NewHttpRequest(url, 'object', function (res) {
+                        if (res == null) {
+                              if (command === ".q") window.close();
+                              return;
+                        }
+                        updateCanvas();
+                  }).send();
+                  return false;
+            }
+
+            sendMethod = function (obj, method) {
+                  console.log("AMT sendMethod ", method);
+                  if (method.length == 0) return false;
+                  var url = obj + '/exe.json?method=' + method;
+                  JSROOT.NewHttpRequest(url, 'text', function (res) {
+                        updateCanvas();
+                  }).send();
+                  return false;
+            }
+
+            /**
+            * Formats an url to update and receive the canvas.
+            */
+            function updateCanvas() {
+                  console.log("AMT update canvas ", method);
+                  var url = 'c1/root.json.gz?compact=3';
+                  JSROOT.NewHttpRequest(url, 'object', function (canvas) {
+                        if (canvas == null) return;
+                        document.getElementById('object_draw').innerHTML = "";
+                        //JSROOT.draw('object_draw', canvas);
+                        JSROOT.draw('object_draw', canvas, '', function (painter) {
+                              oPainter = painter;
+                        });
+                  }).send();
+            }
+
+
+            function updateGeometry() {
+
+                  console.log("AMT update geometry ");
+                  var url = 'eve/exe.json.gz?method=GetGeometry&compact=23';
+                  JSROOT.NewHttpRequest(url, 'object', function (res) {
+                        JSROOT.draw("object_draw", res, "", function (painter) {
+                              geo_painter = painter;
+                        });
+                  }).send();
+            }
+
+
+            function getSelectedNodes() {
+                  console.log("AMT  get selected nodes ");
+                  _checkedNodes = []; // clear saved nodes
+                  var oTree = sap.ui.getCore().byId("tree"); // Tree Id
+                  oTree.getNodes().forEach(function (node) {
+                        if (node.getIsSelected()) _checkedNodes.push(node);
+                        _getCheckedSubNodes(node);
+                  });
+                  return _checkedNodes;
+            }
+
+            function _getCheckedSubNodes(node) {
+                  node.getNodes().forEach(function (subNode) {
+                        if (subNode.getIsSelected()) _checkedNodes.push(subNode);
+                        _getCheckedSubNodes(subNode);
+                  });
+            }
+
+            function createControls() {
+
+                  var oSplitter1 = new sap.ui.commons.Splitter("mySplitter1");
+                  var oSplitter2 = new sap.ui.commons.Splitter("mySplitter2");
+
+                  var oTree = new sap.ui.commons.Tree("tree");
+                  oTree.setTitle("Explorer");
+                  oTree.setWidth("100%");
+                  oTree.setHeight("auto");
+                  oTree.setShowHeaderIcons(false);
+                  oTree.setShowHorizontalScrollbar(false);
+                  oTree.setSelectionMode(sap.ui.commons.TreeSelectionMode.Multi);
+
+                  //create Tree Nodes
+                  var oNode1 = new sap.ui.commons.TreeNode("node1", { text: "Computer", icon: "sap-icon://home", expanded: true });
+                  //add Tree Node root to the Tree
+                  oTree.addNode(oNode1);
+
+                  oSplitter1.setSplitterOrientation(sap.ui.commons.Orientation.Horizontal);
+                  oSplitter1.setSplitterPosition("7%");
+
+                  oSplitter1.setMinSizeFirstPane("7%");
+                  oSplitter1.setMinSizeSecondPane("30%");
+
+                  oSplitter2.setSplitterPosition("25%");
+                  oSplitter2.setMinSizeFirstPane("20%");
+                  oSplitter2.setMinSizeSecondPane("20%");
+
+                  var oTVToolbar = new sap.m.Toolbar({
+                        content: [
+                              new sap.m.Button({
+                                    //type: sap.m.ButtonType.Transparent,
+                                    icon: "sap-icon://vertical-bar-chart",
+                                    press: function () {
+                                          var tree = sap.ui.getCore().byId("tree");
+                                          if (tree) {
+                                                /*
+                                                var widget = sap.ui.getCore().byId("tree");
+                                                var selection = widget.get("value");
+                                                if (selection == "") selection = '""';
+                                                widget = registry.byId("histo_name");
+                                                var hname = widget.get("value");
+                                                var options = getMenuOptions(type);
+                                                if (options == "") options = '""';
+                                                */
+                                                var selection = '""';
+                                                var options = '""';
+                                                var varexp = "";
+                                                getSelectedNodes(); // this is the function for getter selected all nodes.
+                                                var type = "1D"
+                                                if (_checkedNodes.length > 1) type = "2D";
+                                                if (_checkedNodes.length > 2) type = "3D";
+                                                _checkedNodes.forEach(function (node) {
+                                                      varexp = varexp + node.mProperties.text + ":";
+                                                }, this);
+                                                varexp = varexp.replace(/\:$/, '');
+                                                //if (hname !== "") varexp = varexp + ">>" + hname;
+                                                sendMethod("viewer", 'DrawSelection' + '&varexp="' + varexp + '"&selection=' + selection + '&options=' + options);// &nentries=1000000000&firstentry=0');
+                                          }
+                                    }
+                              }),
+                              new sap.m.Button({
+                                    //type: sap.m.ButtonType.Transparent,
+                                    icon: "sap-icon://navigation-left-arrow",
+                                    press: function () {
+                                    }
+                              }),
+                              new sap.m.Button({
+                                    //type: sap.m.ButtonType.Transparent,
+                                    icon: "sap-icon://navigation-right-arrow",
+                                    press: function () {
+                                         updateGeometry(); 
+                                    }
+                              }),
+                              new sap.m.Button({
+                                    //type: sap.m.ButtonType.Transparent,
+                                    icon: "sap-icon://synchronize",
+                                    press: function () {
+                                          updateCanvas();
+                                    }
+                              })
+                        ]
+                  });
+                  oSplitter2.addFirstPaneContent(oTVToolbar);
+                  oSplitter2.addFirstPaneContent(oTree);
+
+                  var oHtml = new sap.ui.core.HTML({
+                        content: "<div class='my_canvas' id='object_draw' style='background-color:green'></div>"
+                  });
+                  oSplitter2.addSecondPaneContent(oHtml);
+
+                  var oToolHeader = new sap.tnt.ToolHeader({
+                        content: [
+                              new sap.m.Button({
+                                    text: "File",
+                                    press: function () {
+                                          fileMenu.openBy(this);
+                                    }
+                              }),
+                              new sap.m.Button({
+                                    text: "View",
+                                    press: function () {
+                                          fileMenu.openBy(this);
+                                    }
+                              }),
+                              new sap.m.Button({
+                                    text: "Window",
+                                    press: function () {
+                                          fileMenu.openBy(this);
+                                    }
+                              }),
+                              new sap.m.Button({
+                                    text: "Help",
+                                    press: function () {
+                                          fileMenu.openBy(this);
+                                    }
+                              }),
+                              new sap.tnt.ToolHeaderUtilitySeparator({
+                              }),
+                              new sap.m.ToolbarSpacer({
+                                    layoutData: new sap.m.OverflowToolbarLayoutData({
+                                          priority: sap.m.OverflowToolbarPriority.NeverOverflow,
+                                          minWidth: "20px"
+                                    })
+                              }),
+                              new sap.m.Button({
+                                    type: sap.m.ButtonType.Transparent,
+                                    icon: "sap-icon://log",
+                                    press: function () {
+                                          sendProcessLine(".q");
+                                    },
+                                    layoutData: new sap.m.OverflowToolbarLayoutData({
+                                          priority: sap.m.OverflowToolbarPriority.NeverOverflow
+                                    })
+                              })
+                        ]
+                  });
+                  oSplitter1.addFirstPaneContent(oToolHeader);
+                  oSplitter1.addSecondPaneContent(oSplitter2);
+                  oSplitter1.placeAt("uiArea1");
+            }
+
+            var fileMenu = new sap.m.Menu({
+                  title: "file_menu",
+                  items: [
+                        new sap.m.MenuItem({
+                              text: "Open",
+                              icon: "sap-icon://add-document",
+                        }),
+                        new sap.m.MenuItem({
+                              text: "Close",
+                              icon: "sap-icon://decline",
+                        }),
+                        new sap.m.MenuItem({
+                              text: "Exit",
+                              icon: "sap-icon://log",
+                        }),
+                  ],
+                  itemSelected: function (oEvent) {
+                        var oItem = oEvent.getParameter("item"), sItemPath = "";
+                        while (oItem instanceof sap.m.MenuItem) {
+                              sItemPath = oItem.getText() + " > " + sItemPath;
+                              oItem = oItem.getParent();
+                        }
+                        sItemPath = sItemPath.substr(0, sItemPath.lastIndexOf(" > "));
+                        if (sItemPath.indexOf("Exit") !== -1)
+                              sendProcessLine(".q");
+                  }
+            });
+
+            updateListTree = function (options) {
+                  var url = 'viewer/root.json.gz?compact=3';
+                  console.log("update tree AMT ");
+                  JSROOT.NewHttpRequest(url, 'object', function (viewer) {
+                        if (viewer == null) return;
+                        var id, name, type, tree_name;
+                        var oTree = sap.ui.getCore().byId("tree"); // Tree Id
+                        // Building the tree
+                        var oNodeTree = new sap.ui.commons.TreeNode(viewer.fTree.fName, {
+                              text: viewer.fTree.fName,
+                              icon: 'sap-icon://tree',
+                              expanded: true
+                        });
+                        oTree.addNode(oNodeTree);
+                        var a = viewer.fTree.fLeaves.arr;
+                        for (key in a) {
+                              id = viewer.fTree.fName + '_' + a[key].fName;
+                              name = a[key].fName;
+                              type = a[key]._typename.indexOf('TLeaf') !== -1 ? 'leaf' : 'branch';
+                              tree_name = viewer.fTree.fName;
+                              oNodeTree.addNode(
+                                    new sap.ui.commons.TreeNode(name, {
+                                          text: name,
+                                          icon: 'sap-icon://e-care',
+                                          expanded: true,
+                                          selectable: true
+                                    })
+                              );
+                        }
+                  }).send();
+            }
+            updateListTree();
+      </script>
+</head>
+
+<body class="sapUiBody" role="application" style="height: 100%; width:100%;">
+      <div id="uiArea1" style="height:100%; width:100%; color:blue; background-color:blue">
+      </div>
+</body>
+
+</html>
