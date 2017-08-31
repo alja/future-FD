@@ -20,16 +20,17 @@
 	</style>
 	<script src="shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
-		    src="https://openui5.hana.ondemand.com/resources/sap-ui-core.js"
-		    data-sap-ui-trace="true"
-		    data-sap-ui-theme="sap_belize"
-		    data-sap-ui-libs="sap.m,sap.f,sap.ui.table,sap.ui.commons,sap.tnt"
-		    data-sap-ui-areas="uiArea1"
-		    data-sap-ui-evt-oninit="createControls()"
+		src="https://openui5.hana.ondemand.com/resources/sap-ui-core.js"
+		data-sap-ui-trace="true"
+		data-sap-ui-theme="sap_belize"
+		data-sap-ui-libs="sap.m,sap.f,sap.ui.table,sap.ui.commons,sap.tnt"
+		data-sap-ui-areas="uiArea1"
+		data-sap-ui-evt-oninit="createControls()"
         >
 	</script>
 	<script type="text/javascript" src="jsrootsys/scripts/JSRootCore.js"></script>
 	
+	<script type='text/javascript' language='javascript'src="genkiDir/my-data.js"></script>
 	<script type='text/javascript' language='javascript'src="genkiDir/my-table.js"></script>
     	<script type='text/javascript' language='javascript'src="genkiDir/my-tree.js"></script>
 	
@@ -37,7 +38,7 @@
 	 
 	 
 	 
-	 
+	 var oModel = null;
 	 var oPainter = null;	 
 	 var oOptionsModel = new sap.ui.model.json.JSONModel();
 	 
@@ -99,20 +100,24 @@
 
          var oTree;
          function createControls() {
-
-	     var oTree = new sap.m.Tree({
+	     var oTree = new sap.m.Tree("tree",{
+                 includeItemInSelection : Boolean(1),
 	         selectionChange: function(oEvent) {
-	             console.log("selection test ", oEvent);
+		     console.log("tree selection BEGIN ");
 	             var items = oEvent.getParameter('listItems');
-	             items.forEach(function(item){
-                         item.$().removeClass('sapMLIBSelected');
-                     });
+		     var item =  oEvent.getParameter('listItem');
+		     var xx = item.mProperties.title.split(",", 2);
+	             var yy = xx[0].split(" ", 2);
+                     var yyn = parseInt(yy[1]);
+                     aData[yyn-1].visible =  item.mProperties.selected;                     
+                     oModel.setData([]);      
+                     oModel.setData({modelData: aData});
+                     oModel.refresh(true);
                  }});
 
 	     var oTreeModel = new sap.ui.model.json.JSONModel();
              oTree.setModel(oTreeModel);
              oTree.setMode(sap.m.ListMode.MultiSelect);
-
 
              var oTreeData = [];
 	     var track_nodes = addTreeElement("Track" );
@@ -123,20 +128,11 @@
              
              var oStandardTreeItem = new MySuperDuperTreeItem ({
 		 title: "{text}",
+		 selected: "{selected}",
                  type: sap.m.ListType.Detail
    	     });
              oTree.bindItems("/", oStandardTreeItem);
              oTree.expandToLevel(1);
-             for (var i = 0; i < oTree.getItems().length; i++) {
-		 oTree.getItems()[i].setType(sap.m.ListType.Detail);
-
-	     }
-             $("tree").addClass("sapUiSizeCompact");
-
-             oTree.setSelectedItem(oTree.getItems()[0], Boolean(1),Boolean(1));
-             oTree.getItems()[0].removeStyleClass('sapMLIBSelected');
-             oTree.setSelectedItem(oTree.getItems()[3], Boolean(1),Boolean(1));
-             
              // set the data to the model
              var oTVToolbar = new sap.m.Toolbar("toolbar", {
 		 content: [
@@ -213,28 +209,60 @@
 	     var aPages = [];
 
 	     //Create an instance of the table control
-	     var oTable2 = new sap.ui.table.Table({
-		 selectionMode: sap.ui.table.SelectionMode.MultiToggle,
+	     var oTable = new sap.ui.table.Table("table", {
+		 selectionMode: sap.ui.table.SelectionMode.None,
+                 editable: Boolean(0),
 		 selectionBehavior: sap.ui.table.SelectionBehavior.RowSelector,
 		 height              : "100%",
 		 rowHeight: 25,
 		 visibleRowCountMode : sap.ui.table.VisibleRowCountMode.Auto
+             });
+
+	     oTable.attachCellClick(function(oEvent) {
+		// alert("HIIII" + oEvent.getParameter("rowIndex") + " - " + oEvent.getParameter("columnIndex") + " - " + oEvent.getParameter("cellControl").getId() );
 	     });
-	     var oTable = oTable2;
+
              
 	     oTable.addExtension(new sap.ui.commons.Button({text: "Change collection"}));
 	     oTable.addExtension(new sap.ui.commons.TextView({text: "Tracks"}));
-	     
-             oControl = new sap.ui.commons.TextField().bindProperty("value", "Idx");
-	     var oColIdx = new sap.ui.table.Column({label: new sap.ui.commons.Label({text: "idx", textAlign: "Left"}), template: oControl, sortProperty: "Idx", filterProperty: "Idx", width: "55px"});
-             oTable.addColumn(oColIdx);
-             addColumnSorterAndFilter(oColIdx, compareIntegers);
+             
+             var colChecked = function(oEvent){
+		 console.log(oEvent);
+		 var xxx = $(this);
+		 var idx = Number(xxx[0].mProperties.name);
+            
+                 oTree.setSelectedItem(
+                     oTree.getItems()[idx], xxx[0].mProperties.checked, Boolean(1));
 
+                 oTree.getModel().refresh();
+             };
+             
+
+	     var oCcon = new sap.ui.commons.CheckBox("testCB", {change: colChecked}).bindProperty("checked", "visible");
+	     oCcon.bindProperty("name", "Idx");
+             oTable.addColumn(new sap.ui.table.Column({
+	         label: new sap.ui.commons.Label({text: "Rnr"}),
+	         template: oCcon,
+	         width: "50px",
+	         hAlign: "Center"
+             }));
+
+             
+             oTable.addColumn(new sap.ui.table.Column({
+                 label: new sap.ui.commons.Label({
+                     text: "Col"
+                 }),
+                 template: new sap.ui.commons.TextView().bindProperty("text", "Idx", function(cellValue) {
+                     this.addStyleClass('myPurple'); 
+                     return cellValue;           
+                 }),           
+                 width: "40px"
+             }));
+             
              oControl = new sap.ui.commons.TextField().bindProperty("value", "pt");
 	     var oColPt = new sap.ui.table.Column({label: new sap.ui.commons.Label({text: "pt", textAlign: "Left"}), template: oControl, sortProperty: "pt", filterProperty: "pt", width: "70px"});
              oTable.addColumn(oColPt);
              addColumnSorterAndFilter(oColPt, compareFloats);
-
 
              oControl = new sap.ui.commons.TextField().bindProperty("value", "eta");
 	     var oColEta = new sap.ui.table.Column({label: new sap.ui.commons.Label({text: "eta", textAlign: "Left"}), template: oControl, sortProperty: "eta", filterProperty: "eta", width: "70px"});
@@ -247,13 +275,12 @@
              addColumnSorterAndFilter(oColPhi, compareFloats);
 
 
-
 	     //Create a model and bind the table rows to this model
-	     var oModel2 = new sap.ui.model.json.JSONModel();
-	     oModel2.setData({modelData: aData});
-	     oTable2.setModel(oModel2);
-	     oTable2.bindRows("/modelData");
-	     oTable2.addStyleClass("sapUiSizeCondensed");
+	     oModel = new sap.ui.model.json.JSONModel();
+	     oModel.setData({modelData: aData});
+	     oTable.setModel(oModel);
+	     oTable.bindRows("/modelData");
+	     oTable.addStyleClass("sapUiSizeCondensed");
 
 
 	     for (var i = 0; i <= 20; i++) {
@@ -268,7 +295,7 @@
 		     {
                          aPages.push(new sap.m.Page("pageAA" + i, {
                              title: "TableView ",
-                             content: [oTable2]
+                             content: [oTable]
                          }));
 		     }
                  else
@@ -286,7 +313,6 @@
 	     aPages[6].setTitle("3D View");
 	     aPages[7].setTitle("Table View");
 	     
-
 	     var oFCL = new sap.f.FlexibleColumnLayout("fcl", {
 		 beginColumnPages: [aPages[0]],
 		 initialBeginColumnPage: "pageAA0",
@@ -345,7 +371,7 @@
                      oItem = oItem.getParent();
 		 }
 		 sItemPath = sItemPath.substr(0, sItemPath.lastIndexOf(" > "));
-		 //alert("itemSelected: " + sItemPath);
+		// alert("itemSelected: " + sItemPath);
 		 if (sItemPath.indexOf("Exit") !== -1)
                      sendProcessLine(".q");
              }
@@ -362,8 +388,21 @@
                  //		 updateControls();
              }, 50);
          });
-         //         window.onload = function() { updateControls(); }
 
+         
+         $( document ).ready(function() {
+             console.log( "ready!" );
+
+             var oTree = sap.ui.getCore().byId("tree");
+
+             for (i = 0; i < aData[i].length ; ++i) {
+                 if ( aData[i].visible) { oTree.setSelectedItem(oTree.getItems()[Number(i+1)], Boolean(1),Boolean(1));};
+             }
+             oTree.setSelectedItem(oTree.getItems()[0], Boolean(1),Boolean(1));
+             oTree.setSelectedItem(oTree.getItems()[16], Boolean(1),Boolean(1));
+             oTree.getModel().refresh();
+
+         });
 	</script>
     </head>
     <body class="sapUiBody" role="application" style="height: 100%; width:100%;">
