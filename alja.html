@@ -22,7 +22,7 @@
 	<script id="sap-ui-bootstrap"
 		src="https://openui5.hana.ondemand.com/resources/sap-ui-core.js"
 		data-sap-ui-trace="true"
-		data-sap-ui-theme="sap_belize"
+	//	data-sap-ui-theme="sap_belize"
 		data-sap-ui-libs="sap.m,sap.f,sap.ui.table,sap.ui.commons,sap.tnt"
 		data-sap-ui-areas="uiArea1"
 		data-sap-ui-evt-oninit="createControls()"
@@ -105,14 +105,25 @@
 	         selectionChange: function(oEvent) {
 		     console.log("tree selection BEGIN ");
 	             var items = oEvent.getParameter('listItems');
+
+                     items.forEach(function(item){
+                         item.$().removeClass('sapMLIBSelected');
+                     });
+
 		     var item =  oEvent.getParameter('listItem');
-		     var xx = item.mProperties.title.split(",", 2);
-	             var yy = xx[0].split(" ", 2);
-                     var yyn = parseInt(yy[1]);
-                     aData[yyn-1].visible =  item.mProperties.selected;                     
-                     oModel.setData([]);      
-                     oModel.setData({modelData: aData});
-                     oModel.refresh(true);
+                     if (item) {
+                         item.$().removeClass('sapMLIBSelected');
+
+		         var xx = item.mProperties.title.split(",", 2);
+                         if (xx.length > 1) {
+	                     var yy = xx[0].split(" ", 2);
+                             var yyn = parseInt(yy[1]);
+                             aData[yyn-1].visible =  item.mProperties.selected;                     
+                             oModel.setData([]);      
+                             oModel.setData({modelData: aData});
+                             oModel.refresh(true);
+                         }
+                     }
                  }});
 
 	     var oTreeModel = new sap.ui.model.json.JSONModel();
@@ -235,6 +246,7 @@
                      oTree.getItems()[idx], xxx[0].mProperties.checked, Boolean(1));
 
                  oTree.getModel().refresh();
+
              };
              
 
