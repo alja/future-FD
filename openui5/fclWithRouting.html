@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html>
+
+    <head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
+
+	<title>Flexible Column Layout</title>
+        
+	<script type="text/javascript" src="http://xrd-cache-1.t2.ucsd.edu/alja/jsroot/scripts/JSRootCore.js"></script>
+
+	<!-- Application launch configuration -->
+	<script>
+         JSROOT.AssertPrerequisites('2d;openui5', function() {
+             // from here you can use  JSROOT.sap variable like
+
+	     jQuery.sap.registerModulePath("flexiblecolumnlayout", "/currentdir/");
+
+
+	     sap.ui.require([
+		 "sap/m/Shell",
+		 "sap/ui/core/ComponentContainer"
+	     ], function (Shell, ComponentContainer) {
+
+		 new Shell("Shell", {
+		     title : "FlexibleColumnLayout demo",
+		     app : new ComponentContainer({
+			 name : 'flexiblecolumnlayout',
+			 height: "100%"
+		     }),
+		     backgroundOpacity: 0,
+		     appWidthLimited: false //false
+		 }).placeAt('content');
+	     });
+});
+	</script>
+    </head>
+
+    <!-- UI Content -->
+    <body class="sapUiBody" id="content" role="application">
+    </body>
+
+</html>
