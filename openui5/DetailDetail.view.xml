@@ -2,15 +2,17 @@
 		   xmlns="sap.uxap"
 		   xmlns:layout="sap.ui.layout"
 		   xmlns:m="sap.m"
+		   xmlns:uit="sap.ui.table"
                    displayBlock="true"
                    controllerName="flexiblecolumnlayout.DetailDetail"
 		   height="100%"
 		>
 
-	<ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="false">
-<headerTitle>
+	<ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="false" class="sapUiTinyMargin">
+<headerTitle class="sapUiNoMarginBottom" >
                         <ObjectPageHeader id="headerForTest"
                                                           objectTitle="TableView"
+                                                          objectSubtitle="Tracks"
                                                           showTitleSelector="true"
                                                           markChanges="true"
                                                           markChangesPress="handleMarkChangesPress"
@@ -20,17 +22,28 @@
                                         <ObjectPageHeaderActionButton icon="sap-icon://exit-full-screen" press="handleExitFullScreen" tooltip="Exit Full Screen Mode" visible="{= ${/actionButtonsInfo/endColumn/exitFullScreen} !== null }"></ObjectPageHeaderActionButton>
                                         <ObjectPageHeaderActionButton icon="sap-icon://decline" press="handleClose" tooltip="Close column" visible="{= ${/actionButtonsInfo/endColumn/closeColumn} !== null }"></ObjectPageHeaderActionButton>
                                 </actions>
+
+
                         </ObjectPageHeader>
                 </headerTitle>
 
 
 
-		<sections>
-			<ObjectPageSection title="">
-				<subSections>
-					<ObjectPageSubSection title="Data">
-						<blocks>
-							<m:Text text="Here should be table"  />
+		<sections class="sapUiNoMarginTop">
+			<ObjectPageSection title="" class="sapUiNoMarginTop">
+				<subSections class="sapUiNoMarginTop">
+					<ObjectPageSubSection title="Data" class="sapUiNoMarginTop">
+						<blocks class="sapUiNoMarginTop" >
+                                                        <uit:Table
+							class="sapUiNoMarginTop"
+                                                             id="table"
+                                                             selectionMode="None"
+                                                             editable="false"
+                                                             height="100%"
+                                                             rowHeight="25"
+                                                             visibleRowCountMode="Auto"
+                                                        >        
+                                                        </uit:Table>
 							
 						</blocks>
 					</ObjectPageSubSection>
