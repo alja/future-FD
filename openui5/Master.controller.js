@@ -1,3 +1,5 @@
+var gTree;
+
 sap.ui.define([
     "sap/ui/model/json/JSONModel",
     "sap/ui/core/mvc/Controller"
@@ -10,6 +12,7 @@ sap.ui.define([
 
             var oTreeModel = new sap.ui.model.json.JSONModel();
 	    var oTree = this.getView().byId("tree");
+            gTree = oTree;
             oTree.setModel(oTreeModel);
             oTree.setMode(sap.m.ListMode.MultiSelect);
 
@@ -27,7 +30,7 @@ sap.ui.define([
    	    });
 
 	    
-            var oTable = this.getView().byId("table");
+//            var oTable = gTable;
             oTree.bindItems("/", oStandardTreeItem);
             oTree.expandToLevel(1);
             // set the data to the model
@@ -112,7 +115,6 @@ addTreeElement = function( tname) {
 
 
 onSelectionChange = function(oEvent) {
-    return; // AMT
     console.log("tree selection BEGIN ");
     var items = oEvent.getParameter('listItems');
 
@@ -132,9 +134,9 @@ onSelectionChange = function(oEvent) {
 	    var yy = xx[0].split(" ", 2);
             var yyn = parseInt(yy[1]);
             aData[yyn-1].visible =  item.mProperties.selected;                     
-            oModel.setData([]);      
-            oModel.setData({modelData: aData});
-            oModel.refresh(true);
+            gTable.getModel().setData([]);      
+            gTable.getModel().setData({modelData: aData});
+            gTable.getModel().refresh(true);
         }
     }
 }

@@ -1,3 +1,5 @@
+var gTable;
+
 sap.ui.define([
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/model/json/JSONModel'
@@ -37,6 +39,7 @@ sap.ui.define([
 
             
             var oTable = this.getView().byId("table");
+            gTable = oTable;
 	   // oTable.addStyleClass(sapUiTinyMargin);
 
    var oCcon = new sap.ui.commons.CheckBox("testCB", {change: colChecked}).bindProperty("checked", "visible");
@@ -108,14 +111,17 @@ sap.ui.define([
  var colChecked = function(oEvent){
 		 console.log(oEvent);
 		 var xxx = $(this);
-		 var idx = Number(xxx[0].mProperties.name);
-            /*
-                 oTree.setSelectedItem(
-                     oTree.getItems()[idx], xxx[0].mProperties.checked, Boolean(1));
+     var idx = Number(xxx[0].mProperties.name);
 
-                 oTree.getModel().refresh();
-*/
 
+            
+                 gTree.setSelectedItem(
+                     gTree.getItems()[idx], xxx[0].mProperties.checked, Boolean(1));
+
+                 gTree.getModel().refresh();
+
+
+     
              };
 
 /*
