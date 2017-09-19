@@ -1,4 +1,4 @@
-<View xmlns="sap.m" displayBlock="true" controllerName="flexiblecolumnlayout.Master" height="100%">
+<View xmlns="sap.m" displayBlock="true" class="sapUiSizeCompact" controllerName="flexiblecolumnlayout.Master" height="100%">
 	<Page id="masterPage" title="Summary">
 	<headerContent>
 	<Toolbar>

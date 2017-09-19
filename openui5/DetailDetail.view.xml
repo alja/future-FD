@@ -1,4 +1,5 @@
 <core:View xmlns:core="sap.ui.core"
+                   class="sapUiSizeCompact"
 		   xmlns="sap.uxap"
 		   xmlns:layout="sap.ui.layout"
 		   xmlns:m="sap.m"
@@ -35,7 +36,7 @@
 					<ObjectPageSubSection title="Data" class="sapUiNoMarginTop">
 						<blocks class="sapUiNoMarginTop" >
                                                         <uit:Table
-							class="sapUiNoMarginTop"
+							     class="sapUiNoMarginTop"
                                                              id="table"
                                                              selectionMode="None"
                                                              editable="false"
