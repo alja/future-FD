@@ -8,6 +8,7 @@ sap.ui.define([
     return Controller.extend("flexiblecolumnlayout.DetailDetail", {
 	onInit: function () {
 	    this.oRouter = this.getOwnerComponent().getRouter();
+	    this.oModel  = this.getOwnerComponent().getModel();
 
             
             var aData = [
