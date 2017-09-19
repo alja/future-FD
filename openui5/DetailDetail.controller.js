@@ -1,8 +1,7 @@
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/model/json/JSONModel'
-], function(jQuery, Controller, JSONModel) {
+], function( Controller, JSONModel) {
 	"use strict";
 
 
@@ -30,10 +29,10 @@ sap.ui.define([
 
 	    ];
 
-            var oModel = new JSONModel({
+            var tModel = new JSONModel({
 		modelData: aData
 	    });
-	   // this.getView().setModel(oModel);
+	  // this.getView().setModel(oModel);
 
             
             var oTable = this.getView().byId("table");
@@ -80,7 +79,7 @@ sap.ui.define([
 
 
 	    //Create a model and bind the table rows to this model
-	    oTable.setModel(oModel);
+	    oTable.setModel(tModel);
 	    oTable.bindRows("/modelData");
 	    oTable.addStyleClass("sapUiSizeCondensed");
 	},

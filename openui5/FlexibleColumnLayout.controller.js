@@ -36,7 +36,7 @@ sap.ui.define([
 
 			this._updateUIElements();
 
-			// Replace the URL with the new layout if a navigation arrow was used
+			// Replace the URL with the new layout if a navigation arrow was used 
 			if (bIsNavigationArrow) {
 				this.oRouter.navTo(this.currentRouteName, {layout: sLayout}, true);
 			}
