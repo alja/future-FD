@@ -57,7 +57,37 @@
 			 press: function() {
 			     fileMenu.openBy(this);
 			 }
-		     })
+		     }),
+                     new sap.tnt.ToolHeaderUtilitySeparator({
+                     }),
+                     new sap.m.ToolbarSpacer({
+			 layoutData : new sap.m.OverflowToolbarLayoutData({
+                             priority: sap.m.OverflowToolbarPriority.NeverOverflow,
+                             minWidth: "20px"
+			 })
+                     }),
+                     new sap.tnt.ToolHeaderUtilitySeparator({
+                     }),
+         	     new sap.m.Label({text: "Event:"}),
+         	     new sap.m.Input("selection", {placeholder: "Event", fieldWidth: "100px"}).setWidth("100px"),
+         	     new sap.m.Label({text: "Luminosity:", tooltip:
+                                "kill server process"}),
+         	     new sap.m.Input("histo_name", {placeholder : "Luminosity"}).setWidth("100px"),
+                     //new sap.m.Input("options", {placeholder : "Options"}).setWidth("100px"),
+                     
+                     
+		     
+                     new sap.m.Button({
+			 type: sap.m.ButtonType.Transparent,
+			 icon: "sap-icon://log",
+			 tooltip: "kill http server",
+			 press: function() {
+                             sendProcessLine(".q");
+			 },
+			 layoutData: new sap.m.OverflowToolbarLayoutData({
+                             priority: sap.m.OverflowToolbarPriority.NeverOverflow
+			 })
+                     })
 		 ]
 	     });
 
