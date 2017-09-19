@@ -14,8 +14,6 @@
     <headerTitle>
   <ObjectPageHeader id="headerForTest"
 		    objectTitle="3D View"
-		    showTitleSelector="true"
-		    markChangesPress="handleMarkChangesPress"
                     >
 	<actions>
 	  <ObjectPageHeaderActionButton icon="sap-icon://full-screen" press="handleFullScreen" tooltip="Enter Full Screen Mode" visible="{= ${/actionButtonsInfo/midColumn/fullScreen} !== null }"></ObjectPageHeaderActionButton>

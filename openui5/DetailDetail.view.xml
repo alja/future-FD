@@ -14,9 +14,6 @@
                         <ObjectPageHeader id="headerForTest"
                                                           objectTitle="TableView"
                                                           objectSubtitle="Tracks"
-                                                          showTitleSelector="true"
-                                                          markChanges="true"
-                                                          markChangesPress="handleMarkChangesPress"
                                 >
                                 <actions>
                                         <ObjectPageHeaderActionButton icon="sap-icon://full-screen" press="handleFullScreen" tooltip="Enter Full Screen Mode" visible="{= ${/actionButtonsInfo/endColumn/fullScreen} !== null }"></ObjectPageHeaderActionButton>
