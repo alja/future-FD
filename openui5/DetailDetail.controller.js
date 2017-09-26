@@ -2,7 +2,10 @@ var gTable;
 
 sap.ui.define([
 	'sap/ui/core/mvc/Controller',
-	'sap/ui/model/json/JSONModel'
+        'sap/ui/model/json/JSONModel',
+        'sap/ui/table/Table',
+        'sap/ui/commons/CheckBox',
+	'sap/ui/table/Column'
 ], function( Controller, JSONModel) {
 	"use strict";
 
