@@ -1,0 +1,40 @@
+<mvc:View
+  height="100%"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns:tnt="sap.tnt"
+  xmlns:core="sap.ui.core"
+  xmlns="sap.m"
+  controllerName="flexiblecolumnlayout.Main">
+  <Page
+    title="Page"
+    showHeader="false"
+     >
+     <subHeader>
+      <tnt:ToolHeader>
+        <Button text="File" type="sap.m.ButtonType.Transparent" press="onPress" />
+        <Button icon="sap-icon://arrow-left" tootlip="previous event" press="onPress" />
+        <Button icon="sap-icon://arrow-right" tootlip="previous event" press="onPress" />
+	<tnt:ToolHeaderUtilitySeparator />
+	<ToolbarSpacer minWidth="20px" priority="sap.m.OverflowToolbarPriority.NeverOverflow" />
+	<tnt:ToolHeaderUtilitySeparator />
+	<Label id="mylt" text="Event:" />
+
+	<Label id="mylt2" text="Luminosity:" />
+
+        <Button icon="sap-icon://log" tootlip="kill http server" press="killRoot" />
+      </tnt:ToolHeader>
+    </subHeader>
+    <content>
+    <core:ComponentContainer height="100%" name="flexiblecolumnlayout" />
+    </content>
+    <!--
+    <footer>
+    <Toolbar>
+    <content>
+	<Label id="mylts" text="some info" />
+    </content>
+    </Toolbar>
+    </footer>
+    -->
+  </Page>
+</mvc:View>
