@@ -18,9 +18,11 @@
 	     background-color: yellow !important;
 	 }
 	</style>
-	
+	 
 	<script type="text/javascript" src="http://xrd-cache-1.t2.ucsd.edu/alja/jsroot/scripts/JSRootCore.js"></script>
-
+	<!--
+        <script type="text/javascript" src="http://jsroot.gsi.de/dev/scripts/JSRootCore.js"></script>
+	-->
 	<!-- Application launch configuration -->
 	<script>
 	 JSROOT.AssertPrerequisites('2d;openui5', function() {
@@ -38,7 +40,8 @@
 		 var page = sap.ui.view({
 		     id: "idMain",
 		     viewName: "flexiblecolumnlayout.Main",
-	    type: sap.ui.core.mvc.ViewType.XML
+		     type: sap.ui.core.mvc.ViewType.XML
+		     
 	    });
 	    app.addPage(page);
 	    app.placeAt("content");
