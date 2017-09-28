@@ -1,42 +1,64 @@
 sap.ui.define([
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/mvc/Controller"
+    "sap/ui/model/json/JSONModel",
+    "sap/ui/core/mvc/Controller"
 ], function (JSONModel, Controller) {
-	"use strict";
+    "use strict";
 
-	return Controller.extend("flexiblecolumnlayout.Detail", {
-		onInit: function () {
-			this.oRouter = this.getOwnerComponent().getRouter();
-		    this.oModel = this.getOwnerComponent().getModel();
-		    console.log("set tank model");
-/*
-			var oModel3 = new sap.ui.model.json.JSONModel({ 
-				filename: "http://xrd-cache-1.t2.ucsd.edu/alja/tank.root", 
-				itemname: "geom", 
-				opt: "z" 
-			});
-		    var pp = sap.ui.getCore().byId("__xmlview2--panel3");
-		    console.log("whole ", pp);
-		    console.log("ID whole ", pp0);
-		    
-	            pp.setModel(oModel3, "__xmlview2--panel3");
-*/		    
-		},
-		handleDetailPress: function () {
-			var oNextUIState = this.getOwnerComponent().getHelper().getNextUIState(2);
-			this.oRouter.navTo("detailDetail", {layout: oNextUIState.layout});
-		},
-		handleFullScreen: function () {
-			var sNextLayout = this.oModel.getProperty("/actionButtonsInfo/midColumn/fullScreen");
-			this.oRouter.navTo("detail", {layout: sNextLayout});
-		},
-		handleExitFullScreen: function () {
-			var sNextLayout = this.oModel.getProperty("/actionButtonsInfo/midColumn/exitFullScreen");
-			this.oRouter.navTo("detail", {layout: sNextLayout});
-		},
-		handleClose: function () {
-			var sNextLayout = this.oModel.getProperty("/actionButtonsInfo/midColumn/closeColumn");
-			this.oRouter.navTo("master", {layout: sNextLayout});
-		}
-	});
+    return Controller.extend("flexiblecolumnlayout.Detail", {
+	onInit: function () {
+	    this.oRouter = this.getOwnerComponent().getRouter();
+	    this.oModel = this.getOwnerComponent().getModel();
+	    
+	    console.log("set tank model");
+	    var oModel3 = new sap.ui.model.json.JSONModel({ 
+                filename: "https://root.cern/js/files/zdemo.root", 
+		itemname: "geom", 
+		opt: "z" 
+	    });
+	    sap.ui.getCore().setModel(oModel3, "__xmlview2--panel3");
+	    
+	},
+	handleDetailPress: function () {
+	    var oNextUIState = this.getOwnerComponent().getHelper().getNextUIState(2);
+	    this.oRouter.navTo("detailDetail", {layout: oNextUIState.layout});
+	},
+	handleFullScreen: function () {
+	    var sNextLayout = this.oModel.getProperty("/actionButtonsInfo/midColumn/fullScreen");
+	    this.oRouter.navTo("detail", {layout: sNextLayout});
+	},
+	handleExitFullScreen: function () {
+	    var sNextLayout = this.oModel.getProperty("/actionButtonsInfo/midColumn/exitFullScreen");
+	    this.oRouter.navTo("detail", {layout: sNextLayout});
+	},
+	handleClose: function () {
+	    var sNextLayout = this.oModel.getProperty("/actionButtonsInfo/midColumn/closeColumn");
+	    this.oRouter.navTo("master", {layout: sNextLayout});
+	},
+	handlePainter: function() {
+	    var page = sap.ui.getCore().byId("__xmlview2--p3");
+	    console.log("page ", page);
+
+	    
+	    var panel = sap.ui.getCore().byId("__xmlview2--panel3");
+	    console.log("panel ", panel);
+
+            var obj_painter = null;
+            var panelController = panel.getController();
+	    console.log("controller ", panelController);
+	    
+	    
+	    if (panelController) {
+		panel.getController().getPainter(function(painter) {
+		    obj_painter = painter;
+		    MessageToast.show("Access painter for " + painter.GetClassName());
+		});
+	    }
+	    else
+	    {
+
+		alert("Access painter is null " + pc.getPainter());
+	    }
+	}
+
+    });
 }, true);
