@@ -1,7 +1,7 @@
 sap.ui.define([
     "sap/ui/model/json/JSONModel",
     "sap/ui/core/mvc/Controller"
-], function (JSONModel, Controller) {
+], function (JSONModel, Controller, MessageToast) {
     "use strict";
 
     return Controller.extend("flexiblecolumnlayout.Detail", {
@@ -45,19 +45,13 @@ sap.ui.define([
             var obj_painter = null;
             var panelController = panel.getController();
 	    console.log("controller ", panelController);
-	    
-	    
-	    if (panelController) {
-		panel.getController().getPainter(function(painter) {
-		    obj_painter = painter;
-		    MessageToast.show("Access painter for " + painter.GetClassName());
-		});
-	    }
-	    else
-	    {
+	    var obj_painter = null;
+         panel.getController().getPainter(function(painter) {
+             obj_painter = painter;
+	     console.log(" AMT this is painter callback");
 
-		alert("Access painter is null " + pc.getPainter());
-	    }
+         });
+	    console.log(" Detail controller handlePainter exit", obj_painter);
 	}
 
     });
