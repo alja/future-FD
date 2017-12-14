@@ -12,6 +12,7 @@
 #include <TH2.h>
 #include <THttpServer.h>
 #include <TRandom3.h>
+#include "ROOT/TWebWindowsManager.hxx"
 
 void fclWithRouting()
 {
@@ -36,4 +37,19 @@ void fclWithRouting()
       hpx->Fill(px);
       hpxpy->Fill(px,py);
    }
+}
+
+void popupTextTest()
+{
+
+   TWebWindowsManager* window = TWebWindowsManager::Instance()->CreateWindow(gROOT->IsBatch());
+
+   // this is very important, it defines name of openui5 widget, which
+   // will run on the client side
+   window->SetPanelName("TextTest");
+
+   // this is call-back, invoked when message received via websocket
+   window->SetDataCallBack([this](unsigned connid, const std::string &arg) { ProcessData(connid, arg); });
+
+   window->SetGeometry(300, 500); // configure predefined geometry 
 }
